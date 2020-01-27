@@ -1,0 +1,13 @@
+We will now tokenize the corpus data in order to produce the **n-grams**. 
+A n-grams is a sequence of "n" items pulled from our Corpus.  
+
+-    For n = 1, this is called a unigram 
+-    For n = 2, this is called a bigram
+-    For n = 3, this is called a trigram  
+
+
+* Bullet 1
+* Bullet 2
+  * Bullet 2a
+  * Bullet 2b
+* Bullet 3
