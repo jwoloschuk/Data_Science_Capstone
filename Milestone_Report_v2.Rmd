@@ -42,7 +42,10 @@ The following steps are necessary to begin analysis of the text files:
 We set the seed to ensure that the samples pulled from the data files can be 
 reproduced.  
 ```{r Seed, echo=TRUE, eval=TRUE}
+
+# Set seed to 1
 set.seed("1")
+# set working directory 
 setwd("~/GitHub/Data_Science_Capstone/")
 ```
 
@@ -124,19 +127,33 @@ Data_Summary_Function <- function(key, path, data) {
   text_data
 }
 # Create an empty dataframe
-summaryDataset <- data.frame( KEY = character(), SIZE = character(), LINES = character(), CHARACTERS = character(), WORDS = character(),LONGEST = character(), stringsAsFactors = FALSE)
+summaryDataset <- data.frame( KEY = character(), SIZE = character(), 
+                              LINES = character(), CHARACTERS = character(), 
+                              WORDS = character(),LONGEST = character(), 
+                              stringsAsFactors = FALSE)
 
 # Call function and add Twitter data to empty dataframe
-summaryDataset <- bind_rows(summaryDataset, Data_Summary_Function( Twitter_File_Name, Twitter_File_Path, Twitter_data) )
+summaryDataset <- bind_rows(summaryDataset, 
+                            Data_Summary_Function( Twitter_File_Name, 
+                                                   Twitter_File_Path, 
+                                                   Twitter_data) )
 
 # Call function and add News data to empty dataframe
-summaryDataset <- bind_rows(summaryDataset, Data_Summary_Function( News_File_Name, News_File_Path, News_data) )
+summaryDataset <- bind_rows(summaryDataset, 
+                            Data_Summary_Function( News_File_Name, 
+                                                   News_File_Path, 
+                                                   News_data) )
 
 # Call function and add Blog data to empty dataframe
-summaryDataset <- bind_rows(summaryDataset, Data_Summary_Function( Blogs_File_Name, Blogs_File_Path, Blogs_data) )
+summaryDataset <- bind_rows(summaryDataset, 
+                            Data_Summary_Function( Blogs_File_Name, 
+                                                   Blogs_File_Path, 
+                                                   Blogs_data) )
 
 # Change the names of the rows/columns so they are more informative 
-names(summaryDataset) <- c("File Name", "Size (MB)", "No. of Lines", "Number of Characters", "Number of Words","Longest Line Length")
+names(summaryDataset) <- c("File Name", "Size (MB)", "No. of Lines",
+                           "Number of Characters", "Number of Words",
+                           "Longest Line Length")
 row.names(summaryDataset) <- c("Twitter","News","Blogs")
 
 # Use kable function to build a clean table in the markdown format
@@ -144,17 +161,22 @@ kable(summaryDataset, format = "markdown")
 
 ```
 
-From the data, it can be seen that there are a number of issues with the data that need to be fixed. There is profanity and non-english words/characters. These will all need to be removed from the dataset.
+From the data, it can be seen that there are a number of issues with the data 
+that need to be fixed. There is profanity and non-english words/characters. 
+These will all need to be removed from the dataset.
 
 
 ### 3. Creation of Corpus
 
-We create a corpus To provide a uniform heterogeneous way of accessing the root TEXT of a document to perform text mining work, regardless of file location, internal annotations and other features unique to the document, we load up the text document(s) into a **"CORPUS"** from various **sources**.
+We create a corpus To provide a uniform and easy way to access the text of the 
+three documents. We will create and this corpus from the three text sources
+(Twitter, News, Blogs).
 
 ```{r Single Corpus, echo=TRUE, eval=TRUE}
 # Fucntion to load a single data file
 Single_Corpus_Function <- function( filename ) {
-  VCorpus( VectorSource( paste(readLines(file( filename )) ,collapse="\n") ), list(reader = readPlain) )
+  VCorpus( VectorSource( paste(readLines(file( filename )) ,collapse="\n") ),
+           list(reader = readPlain) )
 } 
 ```
 
@@ -171,7 +193,9 @@ Sample_Percent <- 0.05
 Sample_Data_Function <- function( df, sp = Sample_Percent ) { sample(df, length(df) * sp )  }
 
 # Call the function for each text source and combine data
-Combined_Sample_Data <- c( Sample_Data_Function( Blogs_data ), Sample_Data_Function( News_data ), Sample_Data_Function( Twitter_data ) )
+Combined_Sample_Data <- c( Sample_Data_Function( Blogs_data ), 
+                           Sample_Data_Function( News_data ), 
+                           Sample_Data_Function( Twitter_data ) )
 
 # Save the combined data subset as a txt file
 Combined_Sample_Data_File_Name <- paste0( Base_File_Path, "en_US.combined_subset.txt" )
@@ -226,12 +250,14 @@ Swear_Word_List <- readLines(paste0(Swear_Words_File_Path,'swearwords.txt'))
 ### 2. Build Corpus Processing Function
 
 The following function processes the Corpus and cleans it up. This function will:
-*  Convert text to lowercase, which helps create uniformity
-*  Remove punctuation, white spaces and numbers
-*  Remove swear words and other profanity
-*  Remove non-english words/characters
-*  Remove stopwords, such as "in", "the", "a", "of", "and", etc.tasks performed to preprocess our various corpus.
-*  Stems the data (reducing inflection so argued/arguing becomes argu) 
+
+
+-  Convert text to lowercase, which helps create uniformity
+-  Remove punctuation, white spaces and numbers
+-  Remove swear words and other profanity
+-  Remove non-english words/characters
+-  Remove stopwords
+-  Stems the data (reducing inflection so argued/arguing becomes argu) 
 
 
 ```{r Process Corpus Function, echo=TRUE, eval=TRUE}
@@ -315,7 +341,7 @@ head(Corpus_Frequency)
 ```{r Plot Corpus Frequency, echo=TRUE, eval=TRUE}
 
 # Plot of the top 20 unigrams
-barplot(head(Corpus_Frequency,20),main="Top 20 Highest Word Frequency", 
+barplot(head(Corpus_Frequency,20),main="Top 20 Highest Word/Unigram Frequency", 
         ylab = "Count / Frequency", col = "blue", las = 2)
 ```
 
@@ -352,15 +378,17 @@ in the corpus data.
 ```{r Bigram / Trigram, echo=TRUE, eval=TRUE}
 
 # Call Trigram and Frequency functions 
-bigram <- removeSparseTerms(TermDocumentMatrix(Corpus_Processed_Data, control = list(tokenize = Bigram_Tokenizer_Function)), 0.9999)
+bigram <- removeSparseTerms(
+  TermDocumentMatrix(Corpus_Processed_Data, control = list(tokenize = Bigram_Tokenizer_Function)), 0.9999)
+
 bigram_frequency <- Frequency_Function(bigram)
 
 
 # Call Trigram and Frequency functions 
-trigram <- removeSparseTerms(TermDocumentMatrix(Corpus_Processed_Data, control = list(tokenize = Trigram_Tokenizer_Function)), 0.9999)
+trigram <- removeSparseTerms(
+  TermDocumentMatrix(Corpus_Processed_Data, control = list(tokenize = Trigram_Tokenizer_Function)), 0.9999)
+
 trigram_frequency <- Frequency_Function(trigram)
-
-
 
 ```
 
