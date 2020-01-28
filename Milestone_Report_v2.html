@@ -666,7 +666,7 @@ Trigram_Tokenizer_Function &lt;-
   function(x)
     unlist(lapply(ngrams(words(x), 3), paste, collapse = &quot; &quot;), use.names = FALSE)</code></pre>
 <p>Using these functions, we determine the number of bigrams and trigrams contained in the corpus data.</p>
-<pre class="r"><code># Call Trigram and Frequency functions 
+<pre class="r"><code># Call Bigram and Frequency functions 
 bigram &lt;- removeSparseTerms(
   TermDocumentMatrix(Corpus_Processed_Data, control = list(tokenize = Bigram_Tokenizer_Function)), 0.9999)
 

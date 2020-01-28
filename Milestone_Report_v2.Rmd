@@ -377,7 +377,7 @@ in the corpus data.
 
 ```{r Bigram / Trigram, echo=TRUE, eval=TRUE}
 
-# Call Trigram and Frequency functions 
+# Call Bigram and Frequency functions 
 bigram <- removeSparseTerms(
   TermDocumentMatrix(Corpus_Processed_Data, control = list(tokenize = Bigram_Tokenizer_Function)), 0.9999)
 
